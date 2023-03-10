@@ -838,6 +838,7 @@ jobs:
       fail-fast: false
       matrix:
         group: ${{ fromJson(needs.info.outputs.test_groups) }}
+        partial_group: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
     name: >-
       Run tests Python ${{ matrix.python-version }} (${{ matrix.group }})
@@ -889,8 +890,8 @@ jobs:
           . venv/bin/activate
           python --version
 
-          if [[ ! -f "tests/components/${{ matrix.group }}/__init__.py" ]]; then
-            echo "::error:: missing file tests/components/${{ matrix.group }}/__init__.py"
+          if [[ ! -f "tests/components/${{ matrix.partial_group }}/__init__.py" ]]; then
+            echo "::error:: missing file tests/components/${{ matrix.partial_group }}/__init__.py"
             exit 1
           fi
 
@@ -898,14 +899,14 @@ jobs:
             -qq \
             --timeout=9 \
             -n auto \
-            --cov="homeassistant.components.${{ matrix.group }}" \
+            --cov="homeassistant.components.${{ matrix.partial_group }}" \
             --cov-report=xml \
             --cov-report=term-missing \
             -o console_output_style=count \
             --durations=0 \
             --durations-min=1 \
             -p no:sugar \
-            tests/components/${{ matrix.group }}
+            tests/components/${{ matrix.partial_group }}
       - name: Run pytest (fully)
         if: needs.info.outputs.test_full_suite == 'true'
         timeout-minutes: 60
