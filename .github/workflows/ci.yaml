@@ -273,18 +273,17 @@ jobs:
           key: >-
             ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{
               needs.info.outputs.pre-commit_cache_key }}
-      - name: Run black (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual black --all-files --show-diff-on-failure
       - name: Run black (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
           shopt -s globstar
           pre-commit run --hook-stage manual black --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*} --show-diff-on-failure
+      - name: Run black (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual black --all-files --show-diff-on-failure
 
   lint-flake8:
     name: Check flake8
@@ -322,18 +321,17 @@ jobs:
       - name: Register flake8 problem matcher
         run: |
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
-      - name: Run flake8 (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual flake8 --all-files
       - name: Run flake8 (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
           shopt -s globstar
           pre-commit run --hook-stage manual flake8 --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*}
+      - name: Run flake8 (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual flake8 --all-files
 
   lint-ruff:
     name: Check ruff
@@ -371,18 +369,17 @@ jobs:
       - name: Register ruff problem matcher
         run: |
           echo "::add-matcher::.github/workflows/matchers/ruff.json"
-      - name: Run ruff (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual ruff --all-files --show-diff-on-failure
       - name: Run ruff (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
           shopt -s globstar
           pre-commit run --hook-stage manual ruff --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*} --show-diff-on-failure
+      - name: Run ruff (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual ruff --all-files --show-diff-on-failure
 
   lint-isort:
     name: Check isort
@@ -456,18 +453,17 @@ jobs:
             ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{
               needs.info.outputs.pre-commit_cache_key }}
 
-      - name: Run pyupgrade (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual pyupgrade --all-files --show-diff-on-failure
       - name: Run pyupgrade (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
           shopt -s globstar
           pre-commit run --hook-stage manual pyupgrade --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*} --show-diff-on-failure
+      - name: Run pyupgrade (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual pyupgrade --all-files --show-diff-on-failure
 
       - name: Register yamllint problem matcher
         run: |
@@ -485,18 +481,17 @@ jobs:
           . venv/bin/activate
           pre-commit run --hook-stage manual check-json --all-files
 
+      - name: Run prettier (partially)
+        shell: bash
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual prettier --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*}
       - name: Run prettier (fully)
         if: needs.info.outputs.test_full_suite == 'true'
         run: |
           . venv/bin/activate
           pre-commit run --hook-stage manual prettier --all-files
 
-      - name: Run prettier (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
-        shell: bash
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual prettier --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*}
 
       - name: Register check executables problem matcher
         run: |
@@ -526,18 +521,17 @@ jobs:
         with:
           args: hadolint Dockerfile.dev
 
-      - name: Run bandit (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        run: |
-          . venv/bin/activate
-          pre-commit run --hook-stage manual bandit --all-files --show-diff-on-failure
       - name: Run bandit (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
           shopt -s globstar
           pre-commit run --hook-stage manual bandit --files {homeassistant,tests}/components/${{ needs.info.outputs.integrations_glob }}/{*,**/*} --show-diff-on-failure
+      - name: Run bandit (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        run: |
+          . venv/bin/activate
+          pre-commit run --hook-stage manual bandit --all-files --show-diff-on-failure
 
   base:
     name: Prepare dependencies
@@ -701,19 +695,18 @@ jobs:
       - name: Register pylint problem matcher
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
+      - name: Run pylint (partially)
+        shell: bash
+        run: |
+          . venv/bin/activate
+          python --version
+          pylint --ignore-missing-annotations=y homeassistant/components/${{ needs.info.outputs.integrations_glob }}
       - name: Run pylint (fully)
         if: needs.info.outputs.test_full_suite == 'true'
         run: |
           . venv/bin/activate
           python --version
           pylint --ignore-missing-annotations=y homeassistant
-      - name: Run pylint (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
-        shell: bash
-        run: |
-          . venv/bin/activate
-          python --version
-          pylint --ignore-missing-annotations=y homeassistant/components/${{ needs.info.outputs.integrations_glob }}
 
   mypy:
     name: Check mypy
@@ -763,19 +756,18 @@ jobs:
       - name: Register mypy problem matcher
         run: |
           echo "::add-matcher::.github/workflows/matchers/mypy.json"
+      - name: Run mypy (partially)
+        shell: bash
+        run: |
+          . venv/bin/activate
+          python --version
+          mypy homeassistant/components/${{ needs.info.outputs.integrations_glob }}
       - name: Run mypy (fully)
         if: needs.info.outputs.test_full_suite == 'true'
         run: |
           . venv/bin/activate
           python --version
           mypy homeassistant pylint
-      - name: Run mypy (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
-        shell: bash
-        run: |
-          . venv/bin/activate
-          python --version
-          mypy homeassistant/components/${{ needs.info.outputs.integrations_glob }}
 
   pip-check:
     runs-on: ubuntu-22.04
@@ -877,27 +869,7 @@ jobs:
         run: |
           . venv/bin/activate
           python3 -m script.translations develop --all
-      - name: Run pytest (fully)
-        if: needs.info.outputs.test_full_suite == 'true'
-        timeout-minutes: 60
-        run: |
-          . venv/bin/activate
-          python --version
-          python3 -X dev -m pytest \
-            -qq \
-            --timeout=9 \
-            --durations=10 \
-            -n auto \
-            --dist=loadfile \
-            --test-group-count ${{ needs.info.outputs.test_group_count }} \
-            --test-group=${{ matrix.group }} \
-            --cov="homeassistant" \
-            --cov-report=xml \
-            -o console_output_style=count \
-            -p no:sugar \
-            tests
       - name: Run pytest (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         timeout-minutes: 10
         shell: bash
         run: |
@@ -921,6 +893,25 @@ jobs:
             --durations-min=1 \
             -p no:sugar \
             tests/components/${{ matrix.group }}
+      - name: Run pytest (fully)
+        if: needs.info.outputs.test_full_suite == 'true'
+        timeout-minutes: 60
+        run: |
+          . venv/bin/activate
+          python --version
+          python3 -X dev -m pytest \
+            -qq \
+            --timeout=9 \
+            --durations=10 \
+            -n auto \
+            --dist=loadfile \
+            --test-group-count ${{ needs.info.outputs.test_group_count }} \
+            --test-group=${{ matrix.group }} \
+            --cov="homeassistant" \
+            --cov-report=xml \
+            -o console_output_style=count \
+            -p no:sugar \
+            tests
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v3.1.2
         with:
@@ -1156,5 +1147,4 @@ jobs:
         with:
           flags: full-suite
       - name: Upload coverage to Codecov (partial coverage)
-        if: needs.info.outputs.test_full_suite == 'false'
         uses: codecov/codecov-action@v3.1.1
