@@ -72,7 +72,7 @@ jobs:
       postgresql_groups: ${{ steps.info.outputs.postgresql_groups }}
       python_versions: ${{ steps.info.outputs.python_versions }}
       test_full_suite: ${{ steps.info.outputs.test_full_suite }}
-      has_partial_changes: ${{ steps.info.outputs.has_partial_changes }}
+      test_partial_suite: ${{ steps.info.outputs.test_partial_suite }}
       test_group_count: ${{ steps.info.outputs.test_group_count }}
       test_groups: ${{ steps.info.outputs.test_groups }}
       tests_glob: ${{ steps.info.outputs.tests_glob }}
@@ -121,7 +121,7 @@ jobs:
           mariadb_groups=${MARIADB_VERSIONS}
           postgresql_groups=${POSTGRESQL_VERSIONS}
           test_full_suite="true"
-          has_partial_changes="false"
+          test_partial_suite="false"
           test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
           test_group_count=10
           tests="[]"
@@ -157,7 +157,7 @@ jobs:
             mariadb_groups="[]"
             postgresql_groups="[]"
             test_full_suite="false"
-            has_partial_changes="true"
+            test_partial_suite="true"
           fi
 
           # We need to run the full suite on certain branches.
@@ -185,8 +185,8 @@ jobs:
           echo "python_versions=${ALL_PYTHON_VERSIONS}" >> $GITHUB_OUTPUT
           echo "test_full_suite: ${test_full_suite}"
           echo "test_full_suite=${test_full_suite}" >> $GITHUB_OUTPUT
-          echo "has_partial_changes: ${has_partial_changes}"
-          echo "has_partial_changes: ${has_partial_changes}" >> GITHUB_OUTPUT
+          echo "test_partial_suite: ${test_partial_suite}"
+          echo "test_partial_suite: ${test_partial_suite}" >> GITHUB_OUTPUT
           echo "integrations_glob: ${integrations_glob}"
           echo "integrations_glob=${integrations_glob}" >> $GITHUB_OUTPUT
           echo "test_group_count: ${test_group_count}"
@@ -279,7 +279,7 @@ jobs:
             ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{
               needs.info.outputs.pre-commit_cache_key }}
       - name: Run black (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -328,7 +328,7 @@ jobs:
         run: |
           echo "::add-matcher::.github/workflows/matchers/flake8.json"
       - name: Run flake8 (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -377,7 +377,7 @@ jobs:
         run: |
           echo "::add-matcher::.github/workflows/matchers/ruff.json"
       - name: Run ruff (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -462,7 +462,7 @@ jobs:
               needs.info.outputs.pre-commit_cache_key }}
 
       - name: Run pyupgrade (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -491,7 +491,7 @@ jobs:
           pre-commit run --hook-stage manual check-json --all-files
 
       - name: Run prettier (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -531,7 +531,7 @@ jobs:
           args: hadolint Dockerfile.dev
 
       - name: Run bandit (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -706,7 +706,7 @@ jobs:
         run: |
           echo "::add-matcher::.github/workflows/matchers/pylint.json"
       - name: Run pylint (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -768,7 +768,7 @@ jobs:
         run: |
           echo "::add-matcher::.github/workflows/matchers/mypy.json"
       - name: Run mypy (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         shell: bash
         run: |
           . venv/bin/activate
@@ -882,7 +882,7 @@ jobs:
           . venv/bin/activate
           python3 -m script.translations develop --all
       - name: Run pytest (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 10
         shell: bash
         run: |
@@ -1008,7 +1008,7 @@ jobs:
           . venv/bin/activate
           pip install mysqlclient sqlalchemy_utils
       - name: Run pytest (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 20
         shell: bash
         run: |
@@ -1113,7 +1113,7 @@ jobs:
           . venv/bin/activate
           pip install psycopg2 sqlalchemy_utils
       - name: Run pytest (partially)
-        if: needs.info.outputs.has_partial_changes == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 20
         shell: bash
         run: |
