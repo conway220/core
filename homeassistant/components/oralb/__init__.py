@@ -30,9 +30,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     assert address is not None
     data = OralBBluetoothDeviceData()
 
-    def _needs_poll(
-        service_info: BluetoothServiceInfoBleak, last_poll: float | None
-    ) -> bool:
+    def _needs_poll(service_info: BluetoothServiceInfoBleak, last_poll: float | None) -> bool:
         # Only poll if hass is running, we need to poll,
         # and we actually have a way to connect to the device
         return (
