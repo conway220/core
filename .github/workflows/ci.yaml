@@ -274,7 +274,6 @@ jobs:
             ${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{
               needs.info.outputs.pre-commit_cache_key }}
       - name: Run black (partially)
-        if: needs.info.outputs.test_full_suite == 'false'
         shell: bash
         run: |
           . venv/bin/activate
