@@ -72,6 +72,7 @@ jobs:
       postgresql_groups: ${{ steps.info.outputs.postgresql_groups }}
       python_versions: ${{ steps.info.outputs.python_versions }}
       test_full_suite: ${{ steps.info.outputs.test_full_suite }}
+      has_partial_changes: ${{ steps.info.outputs.has_partial_changes }}
       test_group_count: ${{ steps.info.outputs.test_group_count }}
       test_groups: ${{ steps.info.outputs.test_groups }}
       tests_glob: ${{ steps.info.outputs.tests_glob }}
@@ -142,8 +143,6 @@ jobs:
                 fi;
               done
             )
-            # We only want to run partial test if a integration was changed.
-            has_partial_changes="true"
 
             [[ ! -z "${tests}" ]] && tests="${tests::-1}"
             tests="[${tests}]"
@@ -158,6 +157,7 @@ jobs:
             mariadb_groups="[]"
             postgresql_groups="[]"
             test_full_suite="false"
+            has_partial_changes="true"
           fi
 
           # We need to run the full suite on certain branches.
@@ -185,6 +185,8 @@ jobs:
           echo "python_versions=${ALL_PYTHON_VERSIONS}" >> $GITHUB_OUTPUT
           echo "test_full_suite: ${test_full_suite}"
           echo "test_full_suite=${test_full_suite}" >> $GITHUB_OUTPUT
+          echo "has_partial_changes: ${has_partial_changes}"
+          echo "has_partial_changes: ${has_partial_changes}" >> GITHUB_OUTPUT
           echo "integrations_glob: ${integrations_glob}"
           echo "integrations_glob=${integrations_glob}" >> $GITHUB_OUTPUT
           echo "test_group_count: ${test_group_count}"
