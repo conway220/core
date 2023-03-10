@@ -186,7 +186,7 @@ jobs:
           echo "test_full_suite: ${test_full_suite}"
           echo "test_full_suite=${test_full_suite}" >> $GITHUB_OUTPUT
           echo "test_partial_suite: ${test_partial_suite}"
-          echo "test_partial_suite: ${test_partial_suite}" >> GITHUB_OUTPUT
+          echo "test_partial_suite: ${test_partial_suite}" >> $GITHUB_OUTPUT
           echo "integrations_glob: ${integrations_glob}"
           echo "integrations_glob=${integrations_glob}" >> $GITHUB_OUTPUT
           echo "test_group_count: ${test_group_count}"
