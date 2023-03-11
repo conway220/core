@@ -817,7 +817,7 @@ jobs:
           . venv/bin/activate
           ./script/pip_check $PIP_CACHE
 
-  partial-pytest:
+  pytest-partial:
     runs-on: ubuntu-22.04
     if: |
       (github.event_name != 'push' || github.event.repository.full_name == 'home-assistant/core')
@@ -840,7 +840,7 @@ jobs:
         integration: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
     name: >-
-      Run tests Python ${{ matrix.python-version }} (${{ matrix.integration }})
+      Run tests Python ${{ matrix.python-version }} (${{matrix.integration if matrix.integration else 'integration'}})
     steps:
       - name: Install additional OS dependencies
         run: |
