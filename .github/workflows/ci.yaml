@@ -145,8 +145,8 @@ jobs:
             )
 
             [[ ! -z "${tests}" ]] && tests="${tests::-1}"
-            tests="[${tests}]"
             test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ${tests}]"
+            tests="[${tests}]"
             # Test group count should be 1, we don't split partial tests
             test_group_count=1
 
