@@ -34,7 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         service_info: BluetoothServiceInfoBleak, last_poll: float | None
     ) -> bool:
         # Only poll if hass is running, we need to poll,
-        # and we actually have a way to connect to the devices
+        # and we actually have a way to connect to the device
         return (
             hass.state == CoreState.running
             and data.poll_needed(service_info, last_poll)

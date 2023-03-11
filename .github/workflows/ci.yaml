@@ -840,7 +840,6 @@ jobs:
         group: ${{ fromJson(needs.info.outputs.test_groups) }}
         partial_group: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
-        test-type: ["full", "partial"]
     name: >-
       Run tests Python ${{ matrix.python-version }} (${{ matrix.group }})
     steps:
@@ -884,7 +883,7 @@ jobs:
           . venv/bin/activate
           python3 -m script.translations develop --all
       - name: Run pytest (partially)
-        if: needs.info.outputs.test_partial_suite == 'true' && matrix.test-type == 'partial'
+        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 10
         shell: bash
         run: |
