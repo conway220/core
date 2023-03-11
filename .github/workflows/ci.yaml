@@ -921,9 +921,8 @@ jobs:
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
       && (needs.info.outputs.test_full_suite == 'true' || needs.info.outputs.tests_glob) &&
-      always() &&
-      !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
+      !cancelled('pytest-partial') &&
+      !failure('pytest-partial') &&
 
     needs:
       - info
@@ -1131,10 +1130,8 @@ jobs:
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
       && needs.info.outputs.postgresql_groups != '[]' &&
-      always() &&
-      !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
-
+      !cancelled('pytest-partial') &&
+      !failure('pytest-partial') &&
     needs:
       - info
       - base
@@ -1236,9 +1233,8 @@ jobs:
       - pytest-postgres
       - pytest-mariadb
     if: |
-      always() &&
-      !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
+      !failure() && 
+      !cancelled()      
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3.3.0
