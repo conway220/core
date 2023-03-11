@@ -63,7 +63,7 @@ async def test_async_step_bluetooth_not_oralb(hass: HomeAssistant) -> None:
 
 
 async def test_async_step_user_no_devices_found(hass: HomeAssistant) -> None:
-    """Test setup from service info cache with no devices found."""
+    """Test setup from service info cache with no device found."""
     result = await hass.config_entries.flow.async_init(
         DOMAIN,
         context={"source": config_entries.SOURCE_USER},
