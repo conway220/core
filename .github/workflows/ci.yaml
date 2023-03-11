@@ -922,7 +922,7 @@ jobs:
       && github.event.inputs.mypy-only != 'true'
       && (needs.info.outputs.test_full_suite == 'true' || needs.info.outputs.tests_glob) &&
       !cancelled('pytest-partial') &&
-      !failure('pytest-partial') &&
+      !failure('pytest-partial')
 
     needs:
       - info
@@ -1131,7 +1131,7 @@ jobs:
       && github.event.inputs.mypy-only != 'true'
       && needs.info.outputs.postgresql_groups != '[]' &&
       !cancelled('pytest-partial') &&
-      !failure('pytest-partial') &&
+      !failure('pytest-partial')
     needs:
       - info
       - base
