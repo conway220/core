@@ -1223,6 +1223,9 @@ jobs:
     needs:
       - info
       - pytest
+      - pytest-partial
+      - pytest-postgres
+      - pytest-mariadb
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3.3.0
