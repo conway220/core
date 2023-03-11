@@ -124,7 +124,7 @@ jobs:
           test_partial_suite="false"
           test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
           test_group_count=10
-          tests="['None']"
+          tests="[]"
           tests_glob=""
 
           if [[ "${{ steps.integrations.outputs.changes }}" != "[]" ]];
@@ -824,7 +824,6 @@ jobs:
       && github.event.inputs.lint-only != 'true'
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
-      && (needs.info.outputs.test_partial_suite == 'true')
     needs:
       - info
       - base
@@ -840,7 +839,7 @@ jobs:
         integration: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
     name: >-
-      Run tests Python ${{ matrix.python-version }} (${{ matrix.integration }} if ${{ matrix.integration}} else: "integration")
+      Run tests Python ${{ matrix.python-version }} (${{ matrix.integration }})
     steps:
       - name: Install additional OS dependencies
         run: |
@@ -931,6 +930,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
@@ -1031,6 +1031,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
@@ -1136,6 +1137,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
