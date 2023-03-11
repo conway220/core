@@ -840,7 +840,7 @@ jobs:
         integration: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
     name: >-
-      Run tests Python ${{ matrix.python-version }} (${{matrix.integration if matrix.integration else 'integration'}})
+      Run tests Python ${{ matrix.python-version }} (${{ matrix.integration }} if ${{ matrix.integration}} else: "integration")
     steps:
       - name: Install additional OS dependencies
         run: |
