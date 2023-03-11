@@ -146,7 +146,7 @@ jobs:
 
             [[ ! -z "${tests}" ]] && tests="${tests::-1}"
             tests="[${tests}]"
-            test_groups="${tests}"
+            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ${tests}]"
             # Test group count should be 1, we don't split partial tests
             test_group_count=1
 
@@ -171,7 +171,6 @@ jobs:
           then
             mariadb_groups=${MARIADB_VERSIONS}
             postgresql_groups=${POSTGRESQL_VERSIONS}
-            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             test_group_count=10
             test_full_suite="true"
           fi
