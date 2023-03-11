@@ -156,7 +156,6 @@ jobs:
 
             mariadb_groups="[]"
             postgresql_groups="[]"
-            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             test_full_suite="false"
             test_partial_suite="true"
           fi
@@ -172,6 +171,7 @@ jobs:
           then
             mariadb_groups=${MARIADB_VERSIONS}
             postgresql_groups=${POSTGRESQL_VERSIONS}
+            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             test_group_count=10
             test_full_suite="true"
           fi
