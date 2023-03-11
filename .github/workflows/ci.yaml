@@ -124,7 +124,7 @@ jobs:
           test_partial_suite="false"
           test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
           test_group_count=10
-          tests="[]"
+          tests="[integration]"
           tests_glob=""
 
           if [[ "${{ steps.integrations.outputs.changes }}" != "[]" ]];
