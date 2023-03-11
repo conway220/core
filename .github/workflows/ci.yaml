@@ -931,6 +931,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
@@ -1031,6 +1032,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
@@ -1136,6 +1138,7 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
+      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
