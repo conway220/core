@@ -824,7 +824,6 @@ jobs:
       && github.event.inputs.lint-only != 'true'
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
-      && (needs.info.outputs.test_partial_suite == 'true')
     needs:
       - info
       - base
