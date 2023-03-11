@@ -921,7 +921,6 @@ jobs:
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
       && (needs.info.outputs.test_full_suite == 'true' || needs.info.outputs.tests_glob)
-      && !cancelled('pytest-partial') 
       && !failure('pytest-partial')
 
     needs:
