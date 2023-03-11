@@ -1228,6 +1228,10 @@ jobs:
       - pytest-partial
       - pytest-postgres
       - pytest-mariadb
+    if: |
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3.3.0
