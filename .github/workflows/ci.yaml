@@ -145,8 +145,8 @@ jobs:
             )
 
             [[ ! -z "${tests}" ]] && tests="${tests::-1}"
-            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ${tests}]"
             tests="[${tests}]"
+            test_groups="${tests}"
             # Test group count should be 1, we don't split partial tests
             test_group_count=1
 
@@ -156,6 +156,7 @@ jobs:
 
             mariadb_groups="[]"
             postgresql_groups="[]"
+            test_groups="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             test_full_suite="false"
             test_partial_suite="true"
           fi
@@ -839,6 +840,7 @@ jobs:
         group: ${{ fromJson(needs.info.outputs.test_groups) }}
         partial_group: ${{ fromJson(needs.info.outputs.tests) }}
         python-version: ${{ fromJson(needs.info.outputs.python_versions) }}
+        test-type: ["full", "partial"]
     name: >-
       Run tests Python ${{ matrix.python-version }} (${{ matrix.group }})
     steps:
@@ -882,7 +884,7 @@ jobs:
           . venv/bin/activate
           python3 -m script.translations develop --all
       - name: Run pytest (partially)
-        if: needs.info.outputs.test_partial_suite == 'true'
+        if: needs.info.outputs.test_partial_suite == 'true' && matrix.test-type == 'partial'
         timeout-minutes: 10
         shell: bash
         run: |
