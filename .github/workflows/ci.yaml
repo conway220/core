@@ -1231,10 +1231,10 @@ jobs:
       - pytest-postgres
       - pytest-mariadb
     if: |
-      success("pytest")
-      || success("pytest-partial")
-      || success("pytest-mariadb")
-      || success("pytest-postgres")
+      !failure("pytest")
+      || !failure("pytest-partial")
+      || !failure("pytest-mariadb")
+      || !failure("pytest-postgres")
     steps:
       - name: Check out code from GitHub
         uses: actions/checkout@v3.3.0
