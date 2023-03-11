@@ -920,7 +920,11 @@ jobs:
       && github.event.inputs.lint-only != 'true'
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
-      && (needs.info.outputs.test_full_suite == 'true' || needs.info.outputs.tests_glob)
+      && (needs.info.outputs.test_full_suite == 'true' || needs.info.outputs.tests_glob) &&
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+
     needs:
       - info
       - base
@@ -1031,7 +1035,6 @@ jobs:
       - lint-other
       - lint-ruff
       - mypy
-      - pytest-partial
     strategy:
       fail-fast: false
       matrix:
@@ -1127,7 +1130,11 @@ jobs:
       && github.event.inputs.lint-only != 'true'
       && github.event.inputs.pylint-only != 'true'
       && github.event.inputs.mypy-only != 'true'
-      && needs.info.outputs.postgresql_groups != '[]'
+      && needs.info.outputs.postgresql_groups != '[]' &&
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
+
     needs:
       - info
       - base
