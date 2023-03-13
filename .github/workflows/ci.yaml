@@ -880,7 +880,11 @@ jobs:
       - name: Compile English translations
         run: |
           . venv/bin/activate
-          python3 -m script.translations develop --integration ${{ matrix.integration }}
+          if [[ ! -f "homeassistant/components/${{ matrix.integration }}/strings.json" ]]; then
+            echo "::warning:: missing file tests/components/${{ matrix.integration }}/sensors.py"
+          else
+            python3 -m script.translations develop --integration ${{ matrix.integration }}
+          fi
       - name: Run pytest (partially)
         timeout-minutes: 10
         shell: bash
