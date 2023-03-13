@@ -1083,7 +1083,6 @@ jobs:
           . venv/bin/activate
           pip install mysqlclient sqlalchemy_utils
       - name: Run pytest (partially)
-        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 20
         shell: bash
         run: |
@@ -1190,7 +1189,6 @@ jobs:
           . venv/bin/activate
           pip install psycopg2 sqlalchemy_utils
       - name: Run pytest (partially)
-        if: needs.info.outputs.test_partial_suite == 'true'
         timeout-minutes: 20
         shell: bash
         run: |
