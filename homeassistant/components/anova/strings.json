@@ -21,6 +21,14 @@
     }
   },
   "entity": {
+    "number": {
+      "cook_time": {
+        "name": "Cook time"
+      },
+      "target_temperature": {
+        "name": "Target temperature"
+      }
+    },
     "sensor": {
       "cook_time": {
         "name": "Cook time"
