@@ -4,6 +4,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from roborock import RoborockException
 from roborock.roborock_typing import DeviceProp
 
 from homeassistant.components.binary_sensor import (
@@ -14,6 +15,7 @@ from homeassistant.components.binary_sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 
@@ -111,8 +113,13 @@ class RoborockBinarySensorEntity(RoborockCoordinatedEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return the value reported by the sensor."""
-        return bool(
-            self.entity_description.value_fn(
-                self.coordinator.roborock_device_info.props
+        try:
+            return bool(
+                self.entity_description.value_fn(
+                    self.coordinator.roborock_device_info.props
+                )
             )
-        )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                "failed to update {self.entity_description.key}"
+            ) from err

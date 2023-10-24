@@ -2,6 +2,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from roborock import RoborockException
 from roborock.containers import Status
 from roborock.roborock_typing import RoborockCommand
 
@@ -9,6 +10,7 @@ from homeassistant.components.select import SelectEntity, SelectEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 
@@ -111,4 +113,9 @@ class RoborockSelectEntity(RoborockCoordinatedEntity, SelectEntity):
     @property
     def current_option(self) -> str | None:
         """Get the current status of the select entity from device_status."""
-        return self.entity_description.value_fn(self._device_status)
+        try:
+            return self.entity_description.value_fn(self._device_status)
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to update {self.entity_description.key}"
+            ) from err

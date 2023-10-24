@@ -4,11 +4,13 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from roborock import RoborockException
 from roborock.containers import (
     RoborockDockErrorCode,
     RoborockDockTypeCode,
     RoborockErrorCode,
     RoborockStateCode,
+    Status,
 )
 from roborock.roborock_typing import DeviceProp
 
@@ -25,6 +27,7 @@ from homeassistant.const import (
     UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import StateType
 from homeassistant.util import slugify
@@ -174,8 +177,7 @@ SENSOR_DESCRIPTIONS = [
         icon="mdi:garage-open",
         translation_key="dock_error",
         value_fn=lambda data: data.status.dock_error_status.name
-        if data.status.dock_error_status is not None
-        and data.status.dock_type != RoborockDockTypeCode.no_dock
+        if dock_error_valid_entity(data.status)
         else None,
         entity_category=EntityCategory.DIAGNOSTIC,
         device_class=SensorDeviceClass.ENUM,
@@ -190,6 +192,14 @@ SENSOR_DESCRIPTIONS = [
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
 ]
+
+
+def dock_error_valid_entity(status: Status) -> bool:
+    """Determine if the dock error is a valid entity that we can add."""
+    return (
+        status.dock_error_status is not None
+        and status.dock_type != RoborockDockTypeCode.no_dock
+    )
 
 
 async def async_setup_entry(
@@ -231,6 +241,11 @@ class RoborockSensorEntity(RoborockCoordinatedEntity, SensorEntity):
     @property
     def native_value(self) -> StateType:
         """Return the value reported by the sensor."""
-        return self.entity_description.value_fn(
-            self.coordinator.roborock_device_info.props
-        )
+        try:
+            return self.entity_description.value_fn(
+                self.coordinator.roborock_device_info.props
+            )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to update {self.entity_description.key}"
+            ) from err

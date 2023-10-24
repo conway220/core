@@ -1,4 +1,6 @@
 """Test Roborock Sensors."""
+from datetime import timedelta
+from unittest.mock import patch
 
 from roborock.const import (
     FILTER_REPLACE_TIME,
@@ -8,8 +10,9 @@ from roborock.const import (
 )
 
 from homeassistant.core import HomeAssistant
+import homeassistant.util.dt as dt_util
 
-from tests.common import MockConfigEntry
+from tests.common import MockConfigEntry, async_fire_time_changed
 
 
 async def test_sensors(hass: HomeAssistant, setup_entry: MockConfigEntry) -> None:
@@ -47,3 +50,10 @@ async def test_sensors(hass: HomeAssistant, setup_entry: MockConfigEntry) -> Non
         hass.states.get("sensor.roborock_s7_maxv_last_clean_end").state
         == "2023-01-01T03:43:58+00:00"
     )
+    with patch(
+        "homeassistant.components.roborock.coordinator.RoborockLocalClient.get_prop",
+        return_value=None,
+    ):
+        async_fire_time_changed(hass, dt_util.utcnow() + timedelta(seconds=61))
+        await hass.async_block_till_done()
+        assert hass.states.get("sensor.roborock_s7_maxv_dock_error").state == "ok"

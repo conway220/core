@@ -13,6 +13,7 @@ from homeassistant.components.number import NumberEntity, NumberEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE, EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 
@@ -116,6 +117,11 @@ class RoborockNumberEntity(RoborockEntity, NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Set number value."""
-        await self.entity_description.update_value(
-            self.get_cache(self.entity_description.cache_key), value
-        )
+        try:
+            await self.entity_description.update_value(
+                self.get_cache(self.entity_description.cache_key), value
+            )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to set value of {self.entity_description.key}"
+            ) from err

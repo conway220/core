@@ -15,6 +15,7 @@ from homeassistant.components.time import TimeEntity, TimeEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 
@@ -183,6 +184,11 @@ class RoborockTimeEntity(RoborockEntity, TimeEntity):
 
     async def async_set_value(self, value: time) -> None:
         """Set the time."""
-        await self.entity_description.update_value(
-            self.get_cache(self.entity_description.cache_key), value
-        )
+        try:
+            await self.entity_description.update_value(
+                self.get_cache(self.entity_description.cache_key), value
+            )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to set time for {self.entity_description.key}"
+            ) from err

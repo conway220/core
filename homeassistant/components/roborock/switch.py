@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import logging
 from typing import Any
 
+from roborock import RoborockException
 from roborock.api import AttributeCache
 from roborock.command_cache import CacheableAttribute
 
@@ -14,6 +15,7 @@ from homeassistant.components.switch import SwitchEntity, SwitchEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 
@@ -162,15 +164,25 @@ class RoborockSwitch(RoborockEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the switch."""
-        await self.entity_description.update_value(
-            self.get_cache(self.entity_description.cache_key), False
-        )
+        try:
+            await self.entity_description.update_value(
+                self.get_cache(self.entity_description.cache_key), False
+            )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to turn off {self.entity_description.key}"
+            ) from err
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the switch."""
-        await self.entity_description.update_value(
-            self.get_cache(self.entity_description.cache_key), True
-        )
+        try:
+            await self.entity_description.update_value(
+                self.get_cache(self.entity_description.cache_key), True
+            )
+        except RoborockException as err:
+            raise HomeAssistantError(
+                f"Failed to turn on {self.entity_description}"
+            ) from err
 
     @property
     def is_on(self) -> bool | None:

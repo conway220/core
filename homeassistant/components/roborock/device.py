@@ -36,7 +36,15 @@ class RoborockEntity(Entity):
 
     def get_cache(self, attribute: CacheableAttribute) -> AttributeCache:
         """Get an item from the api cache."""
-        return self._api.cache.get(attribute)
+        try:
+            val = self._api.cache.get(attribute)
+        except RoborockException as err:
+            raise HomeAssistantError(f"Failed to update {attribute.name}") from err
+        if val is None:
+            raise HomeAssistantError(
+                f"{attribute.name} value is None - it was not properly cached."
+            )
+        return val
 
     async def send(
         self,
