@@ -62,6 +62,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             network_info[device_id],
             product_info[device.product_id],
             mqtt_clients[device.duid],
+            home_data.rooms,
         )
     await asyncio.gather(
         *(coordinator.verify_api() for coordinator in coordinator_map.values())

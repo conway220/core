@@ -5,7 +5,14 @@ from datetime import timedelta
 import logging
 
 from roborock.cloud_api import RoborockMqttClient
-from roborock.containers import DeviceData, HomeDataDevice, HomeDataProduct, NetworkInfo
+from roborock.containers import (
+    DeviceData,
+    HomeDataDevice,
+    HomeDataProduct,
+    HomeDataRoom,
+    NetworkInfo,
+    RoomMapping,
+)
 from roborock.exceptions import RoborockException
 from roborock.local_api import RoborockLocalClient
 from roborock.roborock_typing import DeviceProp
@@ -34,6 +41,7 @@ class RoborockDataUpdateCoordinator(DataUpdateCoordinator[DeviceProp]):
         device_networking: NetworkInfo,
         product_info: HomeDataProduct,
         cloud_api: RoborockMqttClient,
+        rooms: list[HomeDataRoom],
     ) -> None:
         """Initialize."""
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
@@ -56,9 +64,12 @@ class RoborockDataUpdateCoordinator(DataUpdateCoordinator[DeviceProp]):
             sw_version=self.roborock_device_info.device.fv,
         )
         self.current_map: int | None = None
+        self.maps: dict[str, int] = {}
 
         if mac := self.roborock_device_info.network_info.mac:
             self.device_info[ATTR_CONNECTIONS] = {(dr.CONNECTION_NETWORK_MAC, mac)}
+        self.room_mapping: dict[int, dict[str, int]] = {}
+        self.iot_room_mapping: dict[int, str] = {room.id: room.name for room in rooms}
 
     async def verify_api(self) -> None:
         """Verify that the api is reachable. If it is not, switch clients."""
@@ -107,3 +118,14 @@ class RoborockDataUpdateCoordinator(DataUpdateCoordinator[DeviceProp]):
             self.current_map = (
                 self.roborock_device_info.props.status.map_status - 3
             ) // 4
+
+    def add_map(self, map_flag: int, map_name: str):
+        self.maps[map_name] = map_flag
+
+    def add_room_mapping(self, room_mapping: list[RoomMapping], map_flag: int):
+        self.room_mapping[map_flag] = {
+            self.iot_room_mapping.get(
+                int(mapping.iot_id), "Unknown"
+            ): mapping.segment_id
+            for mapping in room_mapping
+        }

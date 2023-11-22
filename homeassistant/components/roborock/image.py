@@ -2,6 +2,7 @@
 import asyncio
 import io
 from itertools import chain
+from typing import Any
 
 from roborock import RoborockCommand
 from vacuum_map_parser_base.config.color import ColorsPalette
@@ -114,6 +115,14 @@ class RoborockMap(RoborockCoordinatedEntity, ImageEntity):
         parsed_map.image.data.save(img_byte_arr, format="PNG")
         return img_byte_arr.getvalue()
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        """Return the optional state attributes."""
+        return {
+            "map_flag": self.map_flag,
+            "rooms": self.coordinator.room_mapping[self.map_flag],
+        }
+
 
 async def create_coordinator_maps(
     coord: RoborockDataUpdateCoordinator,
@@ -134,6 +143,7 @@ async def create_coordinator_maps(
             maps.map_info, key=lambda data: data.mapFlag == cur_map, reverse=True
         )
         for roborock_map in maps_info:
+            coord.add_map(roborock_map.mapFlag, roborock_map.name)
             # Load the map - so we can access it with get_map_v1
             if roborock_map.mapFlag != cur_map:
                 # Only change the map and sleep if we have multiple maps.
@@ -144,7 +154,11 @@ async def create_coordinator_maps(
                 # map change.
                 await asyncio.sleep(MAP_SLEEP)
             # Get the map data
-            api_data: bytes = await coord.cloud_api.get_map_v1()
+            map_results = await asyncio.gather(
+                *(coord.api.get_room_mapping(), coord.cloud_api.get_map_v1())
+            )
+            api_data: bytes = map_results[1]
+            coord.add_room_mapping(map_results[0], roborock_map.mapFlag)
             entities.append(
                 RoborockMap(
                     f"{slugify(coord.roborock_device_info.device.duid)}_map_{roborock_map.name}",
