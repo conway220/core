@@ -72,6 +72,9 @@
       "cleaning_area": {
         "name": "Cleaning area"
       },
+      "cleaning_brush_time_left": {
+        "name": "Cleaning brush time left"
+      },
       "cleaning_time": {
         "name": "Cleaning time"
       },
@@ -90,11 +93,17 @@
           "cleaning_tank_full_or_blocked": "Cleaning tank full or blocked"
         }
       },
+      "dust_collection_time_left": {
+        "name": "Dust collection time left"
+      },
       "main_brush_time_left": {
         "name": "Main brush time left"
       },
       "mop_drying_remaining_time": {
         "name": "Mop drying remaining time"
+      },
+      "mop_roller_time_left": {
+        "name": "Mop roller time left"
       },
       "last_clean_start": {
         "name": "Last clean begin"
@@ -142,6 +151,9 @@
           "air_drying_stopping": "Air drying stopping",
           "egg_attack": "Cupid mode"
         }
+      },
+      "strainer_time_left": {
+        "name": "Strainer time left"
       },
       "total_cleaning_time": {
         "name": "Total cleaning time"

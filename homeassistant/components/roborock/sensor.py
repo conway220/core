@@ -209,6 +209,42 @@ SENSOR_DESCRIPTIONS = [
         translation_key="mop_drying_remaining_time",
         entity_category=EntityCategory.DIAGNOSTIC,
     ),
+    RoborockSensorDescription(
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="strainer_time_left",
+        icon="mdi:brush",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="strainer_time_left",
+        value_fn=lambda data: data.consumable.strainer_time_left,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    RoborockSensorDescription(
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="dust_collection_time_left",
+        icon="mdi:brush",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="dust_collection_time_left",
+        value_fn=lambda data: data.consumable.dust_collection_time_left,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    RoborockSensorDescription(
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="cleaning_brush_time_left",
+        icon="mdi:brush",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="cleaning_brush_time_left",
+        value_fn=lambda data: data.consumable.cleaning_brush_time_left,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
+    RoborockSensorDescription(
+        native_unit_of_measurement=UnitOfTime.SECONDS,
+        key="mop_roller_time_left",
+        icon="mdi:brush",
+        device_class=SensorDeviceClass.DURATION,
+        translation_key="mop_roller_time_left",
+        value_fn=lambda data: data.consumable.mop_roller_time_left,
+        entity_category=EntityCategory.DIAGNOSTIC,
+    ),
 ]
 
 
