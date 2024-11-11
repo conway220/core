@@ -8,7 +8,11 @@ from roborock.containers import Consumable, Status
 from roborock.exceptions import RoborockException
 from roborock.roborock_message import RoborockDataProtocol
 from roborock.roborock_typing import RoborockCommand
-from roborock.version_1_apis.roborock_client_v1 import AttributeCache, RoborockClientV1
+from roborock.version_1_apis.roborock_client_v1 import (
+    CLOUD_REQUIRED,
+    AttributeCache,
+    RoborockClientV1,
+)
 from roborock.version_1_apis.roborock_mqtt_client_v1 import RoborockMqttClientV1
 from roborock.version_a01_apis import RoborockClientA01
 
@@ -31,11 +35,13 @@ class RoborockEntity(Entity):
         unique_id: str,
         device_info: DeviceInfo,
         api: RoborockClient,
+        cloud_api: RoborockMqttClientV1 | None = None,
     ) -> None:
         """Initialize the Roborock Device."""
         self._attr_unique_id = unique_id
         self._attr_device_info = device_info
         self._api = api
+        self._cloud_api = cloud_api
 
 
 class RoborockEntityV1(RoborockEntity):
@@ -44,10 +50,14 @@ class RoborockEntityV1(RoborockEntity):
     _api: RoborockClientV1
 
     def __init__(
-        self, unique_id: str, device_info: DeviceInfo, api: RoborockClientV1
+        self,
+        unique_id: str,
+        device_info: DeviceInfo,
+        api: RoborockClientV1,
+        cloud_api: RoborockMqttClientV1 | None = None,
     ) -> None:
         """Initialize the Roborock Device."""
-        super().__init__(unique_id, device_info, api)
+        super().__init__(unique_id, device_info, api, cloud_api)
 
     def get_cache(self, attribute: CacheableAttribute) -> AttributeCache:
         """Get an item from the api cache."""
@@ -59,8 +69,14 @@ class RoborockEntityV1(RoborockEntity):
         params: dict[str, Any] | list[Any] | int | None = None,
     ) -> dict:
         """Send a command to a vacuum cleaner."""
+        # Some entities never need to hold the cloud api.
+        api: RoborockClientV1
+        if command in CLOUD_REQUIRED and self._cloud_api is not None:
+            api = self._cloud_api
+        else:
+            api = self._api
         try:
-            response: dict = await self._api.send_command(command, params)
+            response: dict = await api.send_command(command, params)
         except RoborockException as err:
             if isinstance(command, RoborockCommand):
                 command_name = command.name
@@ -114,6 +130,7 @@ class RoborockCoordinatedEntityV1(
             unique_id=unique_id,
             device_info=coordinator.device_info,
             api=coordinator.api,
+            cloud_api=coordinator.cloud_api,
         )
         CoordinatorEntity.__init__(self, coordinator=coordinator)
         self._attr_unique_id = unique_id
